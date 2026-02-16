@@ -36,7 +36,7 @@ conjugamos-official-site/
 | 变量名 | 说明 | 示例 |
 | --- | --- | --- |
 | `VITE_SITE_TITLE` | 页面标题 | `Conjugamos` |
-| `VITE_APK_DOWNLOAD_URL` | APK 下载地址（新服务器或 CDN） | `https://NEW_SERVER_OR_CDN/apk/latest.apk` |
+| `VITE_APK_DOWNLOAD_URL` | APK 下载地址（当前项目默认使用本地路径） | `/src/updates/latest.apk` |
 | `VITE_ADMIN_URL` | 现有 admin 前端地址 | `https://OLD_SERVER/admin` |
 | `VITE_BACKEND_PING_URL` | 现有后端版本/健康检查接口 | `https://OLD_SERVER/api/version` |
 | `VITE_REQUEST_TIMEOUT_MS` | 连通性检查超时时间（毫秒） | `5000` |
@@ -45,11 +45,27 @@ conjugamos-official-site/
 
 ```env
 VITE_SITE_TITLE=Conjugamos
-VITE_APK_DOWNLOAD_URL=https://NEW_SERVER_OR_CDN/apk/latest.apk
+VITE_APK_DOWNLOAD_URL=/src/updates/latest.apk
 VITE_ADMIN_URL=https://OLD_SERVER/admin
 VITE_BACKEND_PING_URL=https://OLD_SERVER/api/version
 VITE_REQUEST_TIMEOUT_MS=5000
 ```
+
+### 本地 APK 放置路径
+
+请把 APK 文件放到项目目录：`src/updates/`，例如：
+
+```txt
+src/updates/latest.apk
+```
+
+项目默认读取 `.env` 中的：
+
+```env
+VITE_APK_DOWNLOAD_URL=/src/updates/latest.apk
+```
+
+执行 `npm run build` 时，项目会自动将 `src/updates/` 复制到 `dist/src/updates/`，确保静态部署后下载路径仍有效。
 
 ## 本地启动步骤
 
@@ -138,7 +154,7 @@ sudo systemctl reload nginx
 ## 页面行为说明
 
 - 标题显示 `VITE_SITE_TITLE`
-- “立即下载 APK”按钮：新窗口打开 `VITE_APK_DOWNLOAD_URL`
+- “立即下载 APK”按钮：触发 `VITE_APK_DOWNLOAD_URL` 的文件下载
 - “管理员后台”按钮：新窗口打开 `VITE_ADMIN_URL`
 - 页面加载后会请求 `VITE_BACKEND_PING_URL`，底部展示：
   - `Connected to backend`

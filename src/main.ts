@@ -20,7 +20,10 @@ title.textContent = appEnv.siteTitle;
 const buttonGroup = document.createElement('div');
 buttonGroup.className = 'button-group';
 
-const buildLinkButton = (label: string, href: string): HTMLAnchorElement => {
+const buildExternalLinkButton = (
+  label: string,
+  href: string
+): HTMLAnchorElement => {
   const link = document.createElement('a');
   link.className = 'button';
   link.textContent = label;
@@ -39,8 +42,42 @@ const buildLinkButton = (label: string, href: string): HTMLAnchorElement => {
   return link;
 };
 
-const apkButton = buildLinkButton('立即下载 APK', appEnv.apkDownloadUrl);
-const adminButton = buildLinkButton('管理员后台', appEnv.adminUrl);
+const buildDownloadButton = (
+  label: string,
+  href: string
+): HTMLAnchorElement => {
+  const link = document.createElement('a');
+  link.className = 'button';
+  link.textContent = label;
+
+  if (!href) {
+    link.href = '#';
+    link.classList.add('button--disabled');
+    link.setAttribute('aria-disabled', 'true');
+    link.addEventListener('click', (event) => event.preventDefault());
+    return link;
+  }
+
+  link.href = href;
+  link.rel = 'noopener noreferrer';
+  link.download = '';
+  link.addEventListener('click', (event) => {
+    event.preventDefault();
+    const trigger = document.createElement('a');
+    trigger.href = href;
+    trigger.download = '';
+    trigger.rel = 'noopener noreferrer';
+    trigger.style.display = 'none';
+    document.body.appendChild(trigger);
+    trigger.click();
+    trigger.remove();
+  });
+
+  return link;
+};
+
+const apkButton = buildDownloadButton('立即下载 APK', appEnv.apkDownloadUrl);
+const adminButton = buildExternalLinkButton('管理员后台', appEnv.adminUrl);
 
 buttonGroup.append(apkButton, adminButton);
 
