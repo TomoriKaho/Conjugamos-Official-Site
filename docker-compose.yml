@@ -1,0 +1,9 @@
+services:
+  official-site:
+    container_name: conjugamos-official-site
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${SITE_PORT:-80}:80"
+    restart: unless-stopped

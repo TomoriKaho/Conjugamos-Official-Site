@@ -15,8 +15,12 @@
 
 ```txt
 conjugamos-official-site/
+├── .dockerignore
 ├── deploy/
-│   └── nginx.conjugamos.conf
+│   ├── nginx.conjugamos.conf
+│   └── nginx.docker.conf
+├── docker-compose.yml
+├── Dockerfile
 ├── src/
 │   ├── env.ts
 │   ├── main.ts
@@ -37,8 +41,8 @@ conjugamos-official-site/
 | --- | --- | --- |
 | `VITE_SITE_TITLE` | 页面标题 | `Conjugamos` |
 | `VITE_APK_DOWNLOAD_URL` | APK 下载地址（当前项目默认使用本地路径） | `/src/updates/latest.apk` |
-| `VITE_ADMIN_URL` | 现有 admin 前端地址 | `https://OLD_SERVER/admin` |
-| `VITE_BACKEND_PING_URL` | 现有后端版本/健康检查接口 | `https://OLD_SERVER/api/version` |
+| `VITE_ADMIN_URL` | 现有 admin 前端地址 | `http://SERVER_IP:3001` |
+| `VITE_BACKEND_PING_URL` | 现有后端版本/健康检查接口 | `http://SERVER_IP:3000/api/version/all` |
 | `VITE_REQUEST_TIMEOUT_MS` | 连通性检查超时时间（毫秒） | `5000` |
 
 `.env` 示例：
@@ -46,10 +50,12 @@ conjugamos-official-site/
 ```env
 VITE_SITE_TITLE=Conjugamos
 VITE_APK_DOWNLOAD_URL=/src/updates/latest.apk
-VITE_ADMIN_URL=https://OLD_SERVER/admin
-VITE_BACKEND_PING_URL=https://OLD_SERVER/api/version
+VITE_ADMIN_URL=http://SERVER_IP:3001
+VITE_BACKEND_PING_URL=http://SERVER_IP:3000/api/version/all
 VITE_REQUEST_TIMEOUT_MS=5000
 ```
+
+如果暂时没有域名，直接填写服务器 IP 即可，例如 `http://81.70.186.50:3001`。
 
 ### 本地 APK 放置路径
 
@@ -87,7 +93,7 @@ cp .env.example .env
 npm run dev
 ```
 
-默认访问地址通常为 `http://localhost:5173`。
+默认访问地址为 `http://localhost:5173`，同一局域网也可通过 `http://服务器IP:5173` 访问。
 
 ## 生产构建步骤
 
@@ -103,7 +109,44 @@ npm run build
 npm run preview
 ```
 
-## 服务器上配置 .env 并构建
+默认访问地址为 `http://localhost:4173`，同一局域网也可通过 `http://服务器IP:4173` 访问。
+
+## Docker 一键启动（推荐）
+
+适用于“暂无域名，仅通过服务器 IP 访问”的场景。
+
+1. 配置 `.env`：
+
+```bash
+cp .env.example .env
+# 编辑 .env，填入真实 IP 与端口
+```
+
+2. 启动：
+
+```bash
+docker compose up -d --build
+```
+
+3. 访问：
+
+```txt
+http://服务器IP
+```
+
+如需改端口（例如 8080），可在启动前设置：
+
+```bash
+SITE_PORT=8080 docker compose up -d --build
+```
+
+停止并删除容器：
+
+```bash
+docker compose down
+```
+
+## 服务器上配置 .env 并构建（非 Docker 方式）
 
 假设项目目录在 `/opt/conjugamos-official-site`：
 
@@ -119,7 +162,7 @@ npm install
 
 ```bash
 cp .env.example .env
-# 然后编辑 .env，填入真实 URL
+# 然后编辑 .env，填入真实 IP 或 URL
 ```
 
 4. 执行构建：
